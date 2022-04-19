@@ -1,14 +1,12 @@
 #! /usr/bin/env python
-
 import os
 import sys
 import random
 import pygame
+import collections
 from pygame import gfxdraw
 
-
 class Player(object):
-
     def __init__(self):
         self.rect = pygame.Rect(32, 32, 16, 16)
 
@@ -74,13 +72,15 @@ class Panel(object):
         pygame.draw.rect(screen, (255, 255, 51), (x + 90, y, 30, 30))
         return screen.blit(text_render2, (x, y))
 
-
+        
 os.environ["SDL_VIDEO_CENTERED"] = "1"
 pygame.init()
 
 pygame.display.set_caption("Search Maze Game")
 screen = pygame.display.set_mode((750, 450))
 clock = pygame.time.Clock()
+# font=pygame.freetype.SysFont(None, 34)
+# font.origin=True
 walls = []
 player = Player()
 panel = Panel()
@@ -115,17 +115,22 @@ WWWWWWWWWWWWWWWWWWWWWWWWWWW
 """.splitlines()[1:]
 
 # Parse the level string above. W = wall, E = exit
+path=[]
 x = y = 1
-for row in level:
-    for col in row:
+for i in range(len(level)):
+    for j in range(len(level[0])):
+        col = level[i][j]
         if col == "W":
             Wall((x, y))
         if col == "E":
             end_rect = pygame.Rect(x, y, 10, 10)
+            path.append((j,i))
+        if col == " ":
+            path.append((j,i))
         x += 18
     y += 18
     x = 1
-
+print(path)
 running = True
 while running:
 
@@ -170,8 +175,14 @@ while running:
     b5 = panel.button(screen, (500, 150), "A*")
     b6 = panel.explored(screen,(500,250),"Explored:")
     b7 = panel.path(screen,(500, 290),"Path:")
-
-    # gfxdraw.filled_circle(screen, 255, 200, 5, (0,128,128))
+    
+    # ticks=pygame.time.get_ticks()
+    # millis=ticks%1000
+    # seconds=int(ticks/1000 % 60)
+    # minutes=int(ticks/60000 % 24)
+    # out='{minutes:02d}:{seconds:02d}:{millis}'.format(minutes=minutes, millis=millis, seconds=seconds)
+    # font.render_to(screen, (540, 350), out, pygame.Color('dodgerblue'))
+    
     pygame.display.flip()
     clock.tick(360)
 

@@ -6,6 +6,7 @@ import random
 import pygame
 from pygame import gfxdraw
 
+
 class Player(object):
 
     def __init__(self):
@@ -34,38 +35,43 @@ class Player(object):
                 if dy < 0:
                     self.rect.top = wall.rect.bottom
 
+
 class Wall(object):
     def __init__(self, pos):
         walls.append(self)
         self.rect = pygame.Rect(pos[0], pos[1], 16, 16)
 
+
 class Panel(object):
     def __init__(self):
         self.rect = pygame.Rect(487, 1, 260, 450)
-        
-    def button(self, screen, x,y, text):
+
+    def button(self, screen, position, text):
         font = pygame.font.SysFont("Italic", 50)
         text_render = font.render(text, 1, (239, 139, 72))
-        x, y, w , h = text_render.get_rect()
-        pygame.draw.line(screen, (150, 150, 150), (x, y), (x + w , y), 5)
+        x, y, w, h = text_render.get_rect()
+        x,y =position
+        pygame.draw.line(screen, (150, 150, 150), (x, y), (x + w, y), 5)
         pygame.draw.line(screen, (150, 150, 150), (x, y - 2), (x, y + h), 5)
-        pygame.draw.line(screen, (50, 50, 50), (x, y + h), (x + w , y + h), 5)
-        pygame.draw.line(screen, (50, 50, 50), (x + w , y+h), [x + w , y], 5)
-        pygame.draw.rect(screen, (100, 100, 100), (x, y, w , h))
+        pygame.draw.line(screen, (50, 50, 50), (x, y + h), (x + w, y + h), 5)
+        pygame.draw.line(screen, (50, 50, 50), (x + w, y + h), [x + w, y], 5)
+        pygame.draw.rect(screen, (100, 100, 100), (x, y, w, h))
         return screen.blit(text_render, (x, y))
 
-    def explored(self,screen,x,y,text):
+    def explored(self, screen, position, text):
         font1 = pygame.font.SysFont("Italic", 50)
         text_render1 = font1.render(text, 1, (239, 139, 72))
-        x, y, w , h = text_render1.get_rect()
-        pygame.draw.rect(screen, (100, 100, 100), (x+160, y, 30 , 30))
+        x, y, w, h = text_render1.get_rect()
+        x,y= position
+        pygame.draw.rect(screen, (100, 100, 100), (x + 160, y, 30, 30))
         return screen.blit(text_render1, (x, y))
-    
-    def path(self,screen,x,y,text):
+
+    def path(self, screen, position, text):
         font2 = pygame.font.SysFont("Italic", 50)
         text_render2 = font2.render(text, 1, (239, 139, 72))
-        x, y, w , h = text_render2.get_rect()
-        pygame.draw.rect(screen, (255, 255, 51), (x+90, y, 30 , 30))
+        x, y, w, h = text_render2.get_rect()
+        x, y = position
+        pygame.draw.rect(screen, (255, 255, 51), (x + 90, y, 30, 30))
         return screen.blit(text_render2, (x, y))
 
 
@@ -122,9 +128,9 @@ for row in level:
 
 running = True
 while running:
-    
+
     clock.tick(60)
-    
+
     for e in pygame.event.get():
         if e.type == pygame.QUIT:
             running = False
@@ -151,19 +157,19 @@ while running:
         sys.exit()
 
     # Draw the scene
-    screen.fill((1,8,52))
+    screen.fill((1, 8, 52))
     for wall in walls:
         pygame.draw.rect(screen, (32, 105, 201), wall.rect)
     pygame.draw.ellipse(screen, (255, 0, 0), end_rect)
     pygame.draw.ellipse(screen, (255, 200, 0), player.rect)
     pygame.draw.rect(screen, (255, 200, 0), panel.rect)
-    b1 = panel.button(screen, 500,5, "BFS")
-    # b2 = panel.button(screen, 510, 5, "DFS")
-    # b3 = panel.button(screen, 490, 10, "UCS")
-    # b4 = panel.button(screen, 510, 10, "GBFS")
-    # b5 = panel.button(screen, 490, 15, "A*")
-    # b6 = panel.explored(screen,490,25,"Explored:")
-    # b7 = panel.path(screen,490, 30,"Path:")
+    b1 = panel.button(screen, (500, 10), "BFS")
+    b2 = panel.button(screen, (620, 10), "DFS")
+    b3 = panel.button(screen,(500, 80), "UCS")
+    b4 = panel.button(screen,(620, 80), "GBFS")
+    b5 = panel.button(screen, (500, 150), "A*")
+    b6 = panel.explored(screen,(500,250),"Explored:")
+    b7 = panel.path(screen,(500, 290),"Path:")
 
     # gfxdraw.filled_circle(screen, 255, 200, 5, (0,128,128))
     pygame.display.flip()

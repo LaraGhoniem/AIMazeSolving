@@ -3,12 +3,16 @@ import os
 import sys
 import random
 import pygame
+import time
 import collections
 from pygame import gfxdraw
 
+goalx = 24
+goaly = 23
+
 class Player(object):
-    def __init__(self):
-        self.rect = pygame.Rect(32, 32, 16, 16)
+    def __init__(self,pos):
+        self.rect = pygame.Rect(pos[0], pos[1], 16, 16)
 
     def move(self, dx, dy):
         if dx != 0:
@@ -37,6 +41,11 @@ class Player(object):
 class Wall(object):
     def __init__(self, pos):
         walls.append(self)
+        self.rect = pygame.Rect(pos[0], pos[1], 16, 16)
+
+class Explored(object):
+    def __init__(self, pos):
+        exp.append(self)
         self.rect = pygame.Rect(pos[0], pos[1], 16, 16)
 
 
@@ -72,70 +81,119 @@ class Panel(object):
         pygame.draw.rect(screen, (255, 255, 51), (x + 90, y, 30, 30))
         return screen.blit(text_render2, (x, y))
 
-        
+class Algorithms(object):
+    def __init__(self, path):
+        self.path = path
+
+    def BFS(self, x, y, level):
+        frontier = collections.deque()
+        frontier.append((x, y))
+        explored = []
+        actions = {}
+        childNode = 0
+        while len(frontier) > 0:
+            time.sleep(0)
+            x,y = frontier.popleft()
+            if(x-1, y) in path and (x-1, y) not in explored:
+                childNode = (x-1, y)
+                frontier.append(childNode)
+                explored.append(childNode)
+                level[y][x] = "+"
+            if(x, y-1) in path and (x, y-1) not in explored:
+                childNode = (x, y-1)
+                frontier.append(childNode)
+                explored.append(childNode)
+                level[y][x] = "+"
+            if(x+1, y) in path and (x+1, y) not in explored:
+                childNode = (x+1, y)
+                frontier.append(childNode)
+                explored.append(childNode)
+                level[y][x] = "+"
+            if (x, y+1) in path and (x, y+1) not in explored:
+                childNode = (x, y+1)
+                frontier.append(childNode)
+                explored.append(childNode)
+                level[y][x] = "+"
+            actions[childNode] = x, y
+            if (x, y) == (goalx, goaly):
+                return actions
+            Maze(level)
+
 os.environ["SDL_VIDEO_CENTERED"] = "1"
 pygame.init()
 
 pygame.display.set_caption("Search Maze Game")
 screen = pygame.display.set_mode((750, 450))
 clock = pygame.time.Clock()
-# font=pygame.freetype.SysFont(None, 34)
-# font.origin=True
+font=pygame.freetype.SysFont(None, 34)
+font.origin=True
 walls = []
-player = Player()
+path=[]
+exp = []
 panel = Panel()
 
 # Holds the level layout in a list of strings. 25R 27C
-level = """
-WWWWWWWWWWWWWWWWWWWWWWWWWWW
-W                         W
-W   WWWWWWWWWWWWWWWWW   W W
-WWW W       W  WW   W   W W
-W W W  WW   W   W   W  WWWW
-W W W   W       W     WWW W
-W   WWWWW  WWWW   W     W W
-WW            W  WW   W   W
-WWWWWWWWWWWWWWW   W   W   W
-W                 WWWWWWWWW
-W  WWWWWW  W   WW         W
-W   W     WWW  W  W  W W  W
-W W WWWWW     WWWWW  WWW  W
-WWW   WW    W         W   W
-W   W    WWWWWWWWW  WWWWWWW
-W  WW       W   W         W
-WWWWWWWWWWWWW   WWWWWWW   W
-W             W W       WWW
-W   WWWWWWW   W    WWWW   W
-W   W    W       W  W    WW
-W WWW  WWW  WW  WWWWW     W
-W   W    WWWW      W  WWWWW
-WWWWWWW    W  WW   WWWW   W
-W              W W      E W
-WWWWWWWWWWWWWWWWWWWWWWWWWWW
-""".splitlines()[1:]
+level = [
+["W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W"],
+["W"," ","P"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","W"],
+["W"," "," "," ","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W"," "," "," ","W"," ","W"],
+["W","W","W"," ","W"," "," "," "," "," "," "," ","W"," "," ","W","W"," "," "," ","W"," "," "," ","W"," ","W"],
+["W"," ","W"," ","W"," "," ","W","W"," "," "," ","W"," "," "," ","W"," "," "," ","W"," "," ","W","W","W","W"],
+["W"," ","W"," ","W"," "," "," ","W"," "," "," "," "," "," "," ","W"," "," "," "," "," ","W","W","W"," ","W"],
+["W"," "," "," ","W","W","W","W","W"," "," ","W","W","W","W"," "," "," ","W"," "," "," "," "," ","W"," ","W"],
+["W","W"," "," "," "," "," "," "," "," "," "," "," "," ","W"," "," ","W","W"," "," "," ","W"," "," "," ","W"],
+["W","W","W","W","W","W","W","W","W","W","W","W","W","W","W"," "," "," ","W"," "," "," ","W"," "," "," ","W"],
+["W"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","W","W","W","W","W","W","W","W","W"],
+["W"," "," ","W","W","W","W","W","W"," "," ","W"," "," "," ","W","W"," "," "," "," "," "," "," "," "," ","W"],
+["W"," "," "," ","W"," "," "," "," "," ","W","W","W"," "," ","W"," "," ","W"," "," ","W"," ","W"," "," ","W"],
+["W"," ","W"," ","W","W","W","W","W"," "," "," "," "," ","W","W","W","W","W"," "," ","W","W","W"," "," ","W"],
+["W","W","W"," "," "," ","W","W"," "," "," "," ","W"," "," "," "," "," "," "," "," "," ","W"," "," "," ","W"],
+["W"," "," "," ","W"," "," "," "," ","W","W","W","W","W","W","W","W","W"," "," ","W","W","W","W","W","W","W"],
+["W"," "," ","W","W"," "," "," "," "," "," "," ","W"," "," "," ","W"," "," "," "," "," "," "," "," "," ","W"],
+["W","W","W","W","W","W","W","W","W","W","W","W","W"," "," "," ","W","W","W","W","W","W","W"," "," "," ","W"],
+["W"," "," "," "," "," "," "," "," "," "," "," "," "," ","W"," ","W"," "," "," "," "," "," "," ","W","W","W"],
+["W"," "," "," ","W","W","W","W","W","W","W"," "," "," ","W"," "," "," "," ","W","W","W","W"," "," "," ","W"],
+["W"," "," "," ","W"," "," "," "," ","W"," "," "," "," "," "," "," ","W"," "," ","W"," "," "," "," ","W","W"],
+["W"," ","W","W","W"," "," ","W","W","W"," "," ","W","W"," "," ","W","W","W","W","W"," "," "," "," "," ","W"],
+["W"," "," "," ","W"," "," "," "," ","W","W","W","W"," "," "," "," "," "," ","W"," "," ","W","W","W","W","W"],
+["W","W","W","W","W","W","W"," "," "," "," ","W"," "," ","W","W"," "," "," ","W","W","W","W"," "," "," ","W"],
+["W"," "," "," "," "," "," "," "," "," "," "," "," "," "," ","W"," ","W"," "," "," "," "," "," ","E"," ","W"],
+["W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W"]
+]
 
-# Parse the level string above. W = wall, E = exit
-path=[]
-x = y = 1
-for i in range(len(level)):
-    for j in range(len(level[0])):
-        col = level[i][j]
-        if col == "W":
-            Wall((x, y))
-        if col == "E":
-            end_rect = pygame.Rect(x, y, 10, 10)
-            path.append((j,i))
-        if col == " ":
-            path.append((j,i))
-        x += 18
-    y += 18
-    x = 1
-print(path)
+# Parse the level string above. "W" = wall, E = exit
+def Maze(level):
+    global player, end_rect, exp
+    x = y = 1
+    for i in range(len(level)):
+        for j in range(len(level[0])):
+            col = level[i][j]
+            if col == "W": 
+                Wall((x, y))
+            if col == "P":
+                player = Player((x, y))
+            if col == "E":
+                end_rect = pygame.Rect(x, y, 10, 10)
+                path.append((j,i))
+            if col == " ":
+                path.append((j,i))
+            if col == "+":
+                Explored((x, y))
+                # exp_rect= pygame.Rect(x, y, 16, 16)
+                # pygame.draw.rect(screen, (100,100,100), exp_rect)
+            x += 18
+        y += 18
+        x = 1
+# print(path)
+Maze(level)
+algorithms = Algorithms(path)
+
 running = True
+
+print(algorithms.BFS(2,1,level))
+
 while running:
-
-    clock.tick(60)
-
+    # clock.tick(60)
     for e in pygame.event.get():
         if e.type == pygame.QUIT:
             running = False
@@ -160,7 +218,7 @@ while running:
     if player.rect.colliderect(end_rect):
         pygame.quit()
         sys.exit()
-
+        
     # Draw the scene
     screen.fill((1, 8, 52))
     for wall in walls:
@@ -168,6 +226,9 @@ while running:
     pygame.draw.ellipse(screen, (255, 0, 0), end_rect)
     pygame.draw.ellipse(screen, (255, 200, 0), player.rect)
     pygame.draw.rect(screen, (255, 200, 0), panel.rect)
+    for x in exp:
+        time.sleep(0)
+        pygame.draw.rect(screen, (100,100,100), x.rect)
     b1 = panel.button(screen, (500, 10), "BFS")
     b2 = panel.button(screen, (620, 10), "DFS")
     b3 = panel.button(screen,(500, 80), "UCS")
@@ -184,6 +245,7 @@ while running:
     # font.render_to(screen, (540, 350), out, pygame.Color('dodgerblue'))
     
     pygame.display.flip()
-    clock.tick(360)
+    # clock.tick(360)
 
+# 
 pygame.quit()

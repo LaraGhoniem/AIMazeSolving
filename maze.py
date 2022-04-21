@@ -191,7 +191,39 @@ class Algorithms(object):
             if (x, y) == (goalx, goaly):
                 return actions
             Maze(level)
-        
+    def GBFS(self, x, y, level):
+        frontier = queue.PriorityQueue()
+        frontier.put((heuristiccost[y][x],(x, y)))
+        explored = []
+        actions = {}
+        childNode = 0
+        while not frontier.empty():
+            time.sleep(0)
+            cost,(x,y) = frontier.get() #####
+            if(x - 1, y) in path and (x - 1, y) not in explored:
+                childNode = (x-1, y)
+                frontier.put(heuristiccost[y][x-1],(x-1,y))
+                explored.append(childNode)
+                level[y][x] = "+"
+            if(x, y - 1) in path and (x, y - 1) not in explored:
+                childNode = (x, y-1)
+                frontier.put(heuristiccost[y-1][x],(x,y-1))
+                explored.append(childNode)
+                level[y][x] = "+"
+            if(x + 1, y) in path and (x + 1, y) not in explored:
+                childNode = (x+1, y)
+                frontier.put(heuristiccost[y][x+1],(x+1,y))
+                explored.append(childNode)
+                level[y][x] = "+"
+            if (x, y + 1) in path and (x, y + 1) not in explored:
+                childNode = (x, y+1)
+                frontier.put(heuristiccost[y+1][x],(x,y+1))
+                explored.append(childNode)
+                level[y][x] = "+"
+            actions[childNode] = x, y
+            if (x, y) == (goalx, goaly):
+                return actions
+            Maze(level)
         
         
 os.environ["SDL_VIDEO_CENTERED"] = "1"
@@ -316,8 +348,8 @@ running = True
 
 #print(algorithms.BFS(2, 1, level))
 #print(algorithms.UCS(2, 1, level))
-print(algorithms.DFS(2, 1, level))
-
+#print(algorithms.DFS(2, 1, level))
+print(algorithms.GBFS(2, 1, level))
 
 while running:
     # clock.tick(60)

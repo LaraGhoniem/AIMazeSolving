@@ -117,7 +117,6 @@ class Algorithms(object):
                 return actions
             Maze(level)
             
-    #####
     def DFS(self, x, y, level):
         frontier = collections.deque()
         frontier.appendleft((x, y))
@@ -128,37 +127,33 @@ class Algorithms(object):
             time.sleep(0)
             x, y = frontier.popleft()
             if (x - 1, y) in path and (x - 1, y) not in explored:
-                node=(x - 1, y)
                 childNode = (x - 1, y)
                 frontier.appendleft(childNode)
-                explored.insert(0,node)
+                explored.append(childNode)
                 level[y][x] = "+"
             if (x, y - 1) in path and (x, y - 1) not in explored:
-                node = (x, y - 1)
                 childNode = (x, y - 1)
                 frontier.appendleft(childNode)
-                explored.insert(0,node)
+                explored.append(childNode)
                 level[y][x] = "+"
             if (x + 1, y) in path and (x + 1, y) not in explored:
-                node=(x + 1, y)
                 childNode = (x + 1, y)
                 frontier.append(childNode)
-                explored.insert(0,node)
+                explored.append(childNode)
                 level[y][x] = "+"
             if (x, y + 1) in path and (x, y + 1) not in explored:
-                node=(x, y + 1)
                 childNode = (x, y + 1)
                 frontier.appendleft(childNode)
-                explored.insert(0,node)
+                explored.append(childNode)
                 level[y][x] = "+"
-            actions[node] = x, y
+            actions[childNode] = x, y
             if (x, y) == (goalx, goaly):
                 return actions
             Maze(level)
             
     def UCS(self, x, y, level):
         frontier = queue.PriorityQueue()
-        frontier.put((realcost[y][x],(x, y)))
+        frontier.put((realcost[y][x], (x, y)))
         explored = []
         actions = {}
         childNode = 0
@@ -166,58 +161,93 @@ class Algorithms(object):
             time.sleep(0)
             # temp = frontier.get()
             # cost,(x,y)= temp
-            cost,(x,y) = frontier.get() #####
+            cost, (x, y) = frontier.get() #####
             if(x - 1, y) in path and (x - 1, y) not in explored:
-                childNode = (x-1, y)
-                frontier.put((realcost[y][x]+realcost[y][x-1],(x-1,y)))
+                childNode = (x - 1, y)
+                frontier.put((realcost[y][x] + realcost[y][x - 1], (x - 1, y)))
                 explored.append(childNode)
                 level[y][x] = "+"
             if(x, y - 1) in path and (x, y - 1) not in explored:
-                childNode = (x, y-1)
-                frontier.put((realcost[y][x]+realcost[y-1][x],(x,y-1)))
+                childNode = (x, y - 1)
+                frontier.put((realcost[y][x] + realcost[y - 1][x], (x, y - 1)))
                 explored.append(childNode)
                 level[y][x] = "+"
             if(x + 1, y) in path and (x + 1, y) not in explored:
-                childNode = (x+1, y)
-                frontier.put((realcost[y][x]+realcost[y][x+1],(x+1,y)))
+                childNode = (x + 1, y)
+                frontier.put((realcost[y][x] + realcost[y][x + 1], (x + 1, y)))
                 explored.append(childNode)
                 level[y][x] = "+"
             if (x, y + 1) in path and (x, y + 1) not in explored:
-                childNode = (x, y+1)
-                frontier.put((realcost[y][x]+realcost[y+1][x],(x,y+1)))
+                childNode = (x, y + 1)
+                frontier.put((realcost[y][x] + realcost[y + 1][x], (x, y + 1)))
                 explored.append(childNode)
                 level[y][x] = "+"
             actions[childNode] = x, y
             if (x, y) == (goalx, goaly):
                 return actions
             Maze(level)
+            
     def GBFS(self, x, y, level):
         frontier = queue.PriorityQueue()
-        frontier.put((heuristiccost[y][x],(x, y)))
+        frontier.put((heuristiccost[y][x], (x, y)))
         explored = []
         actions = {}
         childNode = 0
         while not frontier.empty():
             time.sleep(0)
-            cost,(x,y) = frontier.get() #####
-            if(x - 1, y) in path and (x - 1, y) not in explored:
-                childNode = (x-1, y)
-                frontier.put(heuristiccost[y][x-1],(x-1,y))
+            cost, (x, y) = frontier.get()
+            if (x - 1, y) in path and (x - 1, y) not in explored:
+                childNode = (x - 1, y)
+                frontier.put((heuristiccost[y][x - 1], (x - 1, y)))
                 explored.append(childNode)
                 level[y][x] = "+"
-            if(x, y - 1) in path and (x, y - 1) not in explored:
-                childNode = (x, y-1)
-                frontier.put(heuristiccost[y-1][x],(x,y-1))
+            if (x, y - 1) in path and (x, y - 1) not in explored:
+                childNode = (x, y - 1)
+                frontier.put((heuristiccost[y - 1][x], (x, y - 1)))
                 explored.append(childNode)
                 level[y][x] = "+"
-            if(x + 1, y) in path and (x + 1, y) not in explored:
-                childNode = (x+1, y)
-                frontier.put(heuristiccost[y][x+1],(x+1,y))
+            if (x + 1, y) in path and (x + 1, y) not in explored:
+                childNode = (x + 1, y)
+                frontier.put((heuristiccost[y][x + 1], (x + 1, y)))
                 explored.append(childNode)
                 level[y][x] = "+"
             if (x, y + 1) in path and (x, y + 1) not in explored:
-                childNode = (x, y+1)
-                frontier.put(heuristiccost[y+1][x],(x,y+1))
+                childNode = (x, y + 1)
+                frontier.put((heuristiccost[y + 1][x], (x, y + 1)))
+                explored.append(childNode)
+                level[y][x] = "+"
+            actions[childNode] = x, y
+            if (x, y) == (goalx, goaly):
+                return actions
+            Maze(level)
+        
+    def Astar(self, x, y, level):
+        frontier = queue.PriorityQueue()
+        frontier.put((realcost[y][x], heuristiccost[y][x], (x, y)))
+        explored = []
+        actions = {}
+        childNode = 0
+        while not frontier.empty():
+            time.sleep(0)
+            tcost, hcost, (x,y) = frontier.get()
+            if(x - 1, y) in path and (x - 1, y) not in explored:
+                childNode = (x - 1, y)
+                frontier.put((realcost[y][x] + realcost[y][x - 1] + heuristiccost[y][x - 1], heuristiccost[y][x - 1], (x - 1, y)))
+                explored.append(childNode)
+                level[y][x] = "+"
+            if(x, y - 1) in path and (x, y - 1) not in explored:
+                childNode = (x, y - 1)
+                frontier.put((realcost[y][x] + realcost[y - 1][x] + heuristiccost[y - 1][x], heuristiccost[y - 1][x], (x, y - 1)))
+                explored.append(childNode)
+                level[y][x] = "+"
+            if(x + 1, y) in path and (x + 1, y) not in explored:
+                childNode = (x + 1, y)
+                frontier.put((realcost[y][x] + realcost[y][x + 1] + heuristiccost[y][x + 1], heuristiccost[y][x + 1], (x + 1, y)))
+                explored.append(childNode)
+                level[y][x] = "+"
+            if (x, y + 1) in path and (x, y + 1) not in explored:
+                childNode = (x, y + 1)
+                frontier.put((realcost[y][x] + realcost[y + 1][x] + heuristiccost[y + 1][x], heuristiccost[y + 1][x], (x, y + 1)))
                 explored.append(childNode)
                 level[y][x] = "+"
             actions[childNode] = x, y
@@ -346,10 +376,11 @@ Maze(level)
 algorithms = Algorithms(path)
 running = True
 
-#print(algorithms.BFS(2, 1, level))
-#print(algorithms.UCS(2, 1, level))
-#print(algorithms.DFS(2, 1, level))
-print(algorithms.GBFS(2, 1, level))
+# print(algorithms.BFS(2, 1, level))
+# print(algorithms.UCS(2, 1, level))
+# print(algorithms.DFS(2, 1, level))
+# print(algorithms.GBFS(2, 1, level))
+print(algorithms.Astar(2, 1, level))
 
 while running:
     # clock.tick(60)
@@ -385,9 +416,9 @@ while running:
     pygame.draw.ellipse(screen, (255, 0, 0), end_rect)
     pygame.draw.ellipse(screen, (255, 200, 0), player.rect)
     pygame.draw.rect(screen, (255, 200, 0), panel.rect)
-    # for x in exp:
-    #     time.sleep(0)
-    #     pygame.draw.rect(screen, (100, 100, 100), x.rect)
+    for x in exp:
+        time.sleep(0)
+        pygame.draw.rect(screen, (100, 100, 100), x.rect)
     b1 = panel.button(screen, (500, 10), "BFS")
     b2 = panel.button(screen, (620, 10), "DFS")
     b3 = panel.button(screen, (500, 80), "UCS")

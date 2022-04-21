@@ -47,6 +47,11 @@ class Explored(object):
         exp.append(self)
         self.rect = pygame.Rect(pos[0], pos[1], 16, 16)
 
+class Path(object):
+    def __init__(self, pos):
+        exp.append(self)
+        self.rect = pygame.Rect(pos[0], pos[1], 16, 16)
+
 class Panel(object):
     def __init__(self):
         self.rect = pygame.Rect(487, 1, 260, 450)

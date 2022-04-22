@@ -1,5 +1,6 @@
 import os
 import sys
+import timeit
 from inspect import stack
 import pygame
 import time
@@ -463,19 +464,34 @@ while running:
             running = False
         if e.type == pygame.MOUSEBUTTONDOWN:
             if b1.collidepoint(pygame.mouse.get_pos()):
+                starttime = timeit.default_timer()
+                print("The start time is :", starttime)
                 print(algorithms.BFS(2, 1, level))
+                print("The time taken to explore using bfs :", timeit.default_timer() - starttime)
         if e.type == pygame.MOUSEBUTTONDOWN:
             if b2.collidepoint(pygame.mouse.get_pos()):
+                starttime = timeit.default_timer()
+                print("The start time is :", starttime)
                 print(algorithms.DFS(2, 1, level))
+                print("The time taken to explore using dfs :", timeit.default_timer() - starttime)
         if e.type == pygame.MOUSEBUTTONDOWN:
             if b3.collidepoint(pygame.mouse.get_pos()):
+                starttime = timeit.default_timer()
+                print("The start time is :", starttime)
                 print(algorithms.UCS(2, 1, level))
+                print("The time taken to explore using UCS :", timeit.default_timer() - starttime)
         if e.type == pygame.MOUSEBUTTONDOWN:
             if b4.collidepoint(pygame.mouse.get_pos()):
+                starttime = timeit.default_timer()
+                print("The start time is :", starttime)
                 print(algorithms.GBFS(2, 1, level))
+                print("The time taken to explore using GBFS :", timeit.default_timer() - starttime)
         if e.type == pygame.MOUSEBUTTONDOWN:
             if b5.collidepoint(pygame.mouse.get_pos()):
+                starttime = timeit.default_timer()
+                print("The start time is :", starttime)
                 print(algorithms.Astar(2, 1, level))
+                print("The time taken to explore using A* :", timeit.default_timer() - starttime)
     # Move the player if an arrow key is pressed
     key = pygame.key.get_pressed()
     if key[pygame.K_LEFT]:

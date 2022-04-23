@@ -1,41 +1,17 @@
-import os
-import sys
-from inspect import stack
+import timeit
 import pygame
 import time
 import collections
 import queue
-from pygame import gfxdraw
 
 goalx = 24
 goaly = 23
+fx=2
+fy=1
 
 class Player(object):
     def __init__(self, pos):
         self.rect = pygame.Rect(pos[0], pos[1], 16, 16)
-
-    def move(self, dx, dy):
-        if dx != 0:
-            self.move_single_axis(dx, 0)
-        if dy != 0:
-            self.move_single_axis(0, dy)
-
-    def move_single_axis(self, dx, dy):
-        self.rect.x += dx
-        self.rect.y += dy
-        self.collision(dx, dy)
-
-    def collision(self, dx, dy):
-        for wall in walls:
-            if self.rect.colliderect(wall.rect):
-                if dx > 0:
-                    self.rect.right = wall.rect.left
-                if dx < 0:
-                    self.rect.left = wall.rect.right
-                if dy > 0:
-                    self.rect.bottom = wall.rect.top
-                if dy < 0:
-                    self.rect.top = wall.rect.bottom
 
 class Wall(object):
     def __init__(self, pos):
@@ -46,31 +22,19 @@ class Explored(object):
     def __init__(self, pos):
         exp.append(self)
         self.rect = pygame.Rect(pos[0], pos[1], 16, 16)
-
-class Path(object):
-    def __init__(self, pos):
-        exp.append(self)
+        
+class Final(object):
+    def __init__(self,pos):
+        finalpath.append(self)
         self.rect = pygame.Rect(pos[0], pos[1], 16, 16)
 
 class Panel(object):
     def __init__(self):
         self.rect = pygame.Rect(487, 1, 260, 450)
 
-    def button(self, screen, position, text):
-        font = pygame.font.SysFont("Italic", 50)
-        text_render = font.render(text, 1, (239, 139, 72))
-        x, y, w, h = text_render.get_rect()
-        x, y = position
-        pygame.draw.line(screen, (150, 150, 150), (x, y), (x + w, y), 5)
-        pygame.draw.line(screen, (150, 150, 150), (x, y - 2), (x, y + h), 5)
-        pygame.draw.line(screen, (50, 50, 50), (x, y + h), (x + w, y + h), 5)
-        pygame.draw.line(screen, (50, 50, 50), (x + w, y + h), [x + w, y], 5)
-        pygame.draw.rect(screen, (100, 100, 100), (x, y, w, h))
-        return screen.blit(text_render, (x, y))
-
     def explored(self, screen, position, text):
         font1 = pygame.font.SysFont("Italic", 50)
-        text_render1 = font1.render(text, 1, (239, 139, 72))
+        text_render1 = font1.render(text, 1, (70, 70, 70))
         x, y, w, h = text_render1.get_rect()
         x, y = position
         pygame.draw.rect(screen, (100, 100, 100), (x + 160, y, 30, 30))
@@ -78,11 +42,36 @@ class Panel(object):
 
     def path(self, screen, position, text):
         font2 = pygame.font.SysFont("Italic", 50)
-        text_render2 = font2.render(text, 1, (239, 139, 72))
+        text_render2 = font2.render(text, 1, (70, 70, 70))
         x, y, w, h = text_render2.get_rect()
         x, y = position
-        pygame.draw.rect(screen, (255, 255, 51), (x + 90, y, 30, 30))
+        pygame.draw.rect(screen, (239,139, 72), (x + 90, y, 30, 30))
         return screen.blit(text_render2, (x, y))
+
+class Buttons(object):
+    def __init__(self, screen, position, text):
+        font = pygame.font.SysFont("Italic", 50)
+        self.text_render = font.render(text, 1, (239, 139, 72))
+        x, y, self.w, self.h = self.text_render.get_rect()
+        self.screen = screen
+        self.x, self.y = position
+        self.rect = pygame.Rect(self.x, self.y, self.w, self.h)
+        self.clicked = False
+        
+    def button(self):
+        if self.clicked == False:
+            pygame.draw.line(self.screen, (150, 150, 150), (self.x, self.y), (self.x + self.w, self.y), 5)
+            pygame.draw.line(self.screen, (150, 150, 150), (self.x, self.y - 2), (self.x, self.y + self.h), 5)
+            pygame.draw.line(self.screen, (50, 50, 50), (self.x, self.y + self.h), (self.x + self.w, self.y + self.h), 5)
+            pygame.draw.line(self.screen, (50, 50, 50), (self.x + self.w, self.y + self.h), [self.x + self.w, self.y], 5)
+            pygame.draw.rect(self.screen, (100, 100, 100), (self.x, self.y, self.w, self.h))
+        else:
+            pygame.draw.line(self.screen, (100, 100, 100), (self.x, self.y), (self.x + self.w, self.y), 5)
+            pygame.draw.line(self.screen, (100, 100, 100), (self.x, self.y - 2), (self.x, self.y + self.h), 5)
+            pygame.draw.line(self.screen, (150, 150, 150), (self.x, self.y + self.h), (self.x + self.w, self.y + self.h), 5)
+            pygame.draw.line(self.screen, (150, 150, 150), (self.x + self.w, self.y + self.h), [self.x + self.w, self.y], 5)
+            pygame.draw.rect(self.screen, (50, 50, 50), (self.x, self.y, self.w, self.h))
+        return self.screen.blit(self.text_render, (self.x, self.y))
 
 class Algorithms(object):
     def __init__(self, path):
@@ -94,33 +83,37 @@ class Algorithms(object):
         explored = []
         actions = {}
         childNode = 0
+        actions[x,y] = x,y
         while len(frontier) > 0:
             time.sleep(0)
             x, y = frontier.popleft()
             if(x - 1, y) in path and (x - 1, y) not in explored:
                 childNode = (x - 1, y)
+                actions[childNode] = x,y
                 frontier.append(childNode)
                 explored.append(childNode)
                 level[y][x] = "+"
             if(x, y - 1) in path and (x, y - 1) not in explored:
                 childNode = (x, y - 1)
+                actions[childNode] = x,y
                 frontier.append(childNode)
                 explored.append(childNode)
                 level[y][x] = "+"
             if(x + 1, y) in path and (x + 1, y) not in explored:
                 childNode = (x + 1, y)
+                actions[childNode] = x,y
                 frontier.append(childNode)
                 explored.append(childNode)
                 level[y][x] = "+"
             if (x, y + 1) in path and (x, y + 1) not in explored:
                 childNode = (x, y + 1)
+                actions[childNode] = x,y
                 frontier.append(childNode)
                 explored.append(childNode)
                 level[y][x] = "+"
-            actions[childNode] = x, y
+            Maze(level)
             if (x, y) == (goalx, goaly):
                 return actions
-            Maze(level)
             
     def DFS(self, x, y, level):
         frontier = collections.deque()
@@ -164,9 +157,7 @@ class Algorithms(object):
         childNode = 0
         while not frontier.empty():
             time.sleep(0)
-            # temp = frontier.get()
-            # cost,(x,y)= temp
-            cost, (x, y) = frontier.get() #####
+            cost, (x, y) = frontier.get()
             if(x - 1, y) in path and (x - 1, y) not in explored:
                 childNode = (x - 1, y)
                 frontier.put((realcost[y][x] + realcost[y][x - 1], (x - 1, y)))
@@ -234,7 +225,7 @@ class Algorithms(object):
         childNode = 0
         while not frontier.empty():
             time.sleep(0)
-            tcost, hcost, (x,y) = frontier.get()
+            tcost, hcost, (x, y) = frontier.get()
             if(x - 1, y) in path and (x - 1, y) not in explored:
                 childNode = (x - 1, y)
                 frontier.put((realcost[y][x] + realcost[y][x - 1] + heuristiccost[y][x - 1], heuristiccost[y][x - 1], (x - 1, y)))
@@ -260,8 +251,12 @@ class Algorithms(object):
                 return actions
             Maze(level)
         
+    def pathFind(self, x, y, actions):
+        while (x, y) != (fx, fy):
+            x, y = actions[x, y]
+            level[y][x]="-"
+            Maze(level)
         
-os.environ["SDL_VIDEO_CENTERED"] = "1"
 pygame.init()
 
 pygame.display.set_caption("Search Maze Game")
@@ -269,12 +264,20 @@ screen = pygame.display.set_mode((750, 450))
 clock = pygame.time.Clock()
 font = pygame.freetype.SysFont(None, 34)
 font.origin = True
+clicked = 0
 walls = []
 path = []
 exp = []
+finalpath = []
 panel = Panel()
+buttons = [
+    Buttons(screen, (500, 10), "BFS"),
+    Buttons(screen, (620, 10), "DFS"),
+    Buttons(screen, (500, 80), "UCS"),
+    Buttons(screen, (620, 80), "GBFS"),
+    Buttons(screen, (500, 150), "A*")
+]
 
-# Holds the level layout in a list of strings. 25R 27C
 level = [["W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W"],
         ["W"," ","P"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","W"],
         ["W"," "," "," ","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W"," "," "," ","W"," ","W"],
@@ -353,9 +356,8 @@ heuristiccost = [[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
                  [-1, 71, 53, 184, 109, 154, 35, 21, 122, 97, 198, 95, 121, 163, 47, -1, 47, -1, 176, 114, 151, 38, 108, 40, 0, 159, -1],
                  [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1]]
 
-# Parse the level string above. "W" = wall, E = exit
 def Maze(level):
-    global player, end_rect, exp
+    global player, end_rect
     x = y = 1
     for i in range(len(level)):
         for j in range(len(level[0])):
@@ -369,66 +371,83 @@ def Maze(level):
                 path.append((j, i))
             if col == " ":
                 path.append((j, i))
+            if col == "-":
+                   Final((x,y))
             if col == "+":
                 Explored((x, y))
-                # exp_rect= pygame.Rect(x, y, 16, 16)
-                # pygame.draw.rect(screen, (100,100,100), exp_rect)
             x += 18
         y += 18
         x = 1
-# print(path)
+        
 Maze(level)
 algorithms = Algorithms(path)
 running = True
 
-# print(algorithms.BFS(2, 1, level))
-# print(algorithms.UCS(2, 1, level))
-# print(algorithms.DFS(2, 1, level))
-# print(algorithms.GBFS(2, 1, level))
-print(algorithms.Astar(2, 1, level))
-
 while running:
-    # clock.tick(60)
+    screen.fill((1, 8, 52))
     for e in pygame.event.get():
         if e.type == pygame.QUIT:
             running = False
         if e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
             running = False
-        # if e.type == pygame.MOUSEBUTTONDOWN:
-        #     if b1.collidepoint(pygame.mouse.get_pos()):
-        #         #call function
-
-    # Move the player if an arrow key is pressed
-    key = pygame.key.get_pressed()
-    if key[pygame.K_LEFT]:
-        player.move(-2, 0)
-    if key[pygame.K_RIGHT]:
-        player.move(2, 0)
-    if key[pygame.K_UP]:
-        player.move(0, -2)
-    if key[pygame.K_DOWN]:
-        player.move(0, 2)
-
-    # Just added this to make it slightly fun ;)
-    if player.rect.colliderect(end_rect):
-        pygame.quit()
-        sys.exit()
-        
-    # Draw the scene
-    screen.fill((1, 8, 52))
+        if e.type == pygame.MOUSEBUTTONDOWN:
+            if buttons[0].rect.collidepoint(pygame.mouse.get_pos()):
+                for b in buttons:
+                    b.clicked = False
+                buttons[0].clicked = True
+                starttime = timeit.default_timer()
+                print("The start time is :", starttime)
+                algorithms.pathFind(goalx, goaly, (algorithms.BFS(2, 1, level)))
+                print("The time taken to explore using bfs :", timeit.default_timer() - starttime)
+            if buttons[1].rect.collidepoint(pygame.mouse.get_pos()):
+                for b in buttons:
+                    b.clicked = False
+                buttons[1].clicked = True
+                starttime = timeit.default_timer()
+                print("The start time is :", starttime)
+                algorithms.pathFind(goalx, goaly, (algorithms.DFS(2, 1, level)))
+                print("The time taken to explore using dfs :", timeit.default_timer() - starttime)
+            if buttons[2].rect.collidepoint(pygame.mouse.get_pos()):
+                for b in buttons:
+                    b.clicked = False
+                buttons[2].clicked = True
+                starttime = timeit.default_timer()
+                print("The start time is :", starttime)
+                algorithms.pathFind(goalx, goaly, (algorithms.UCS(2, 1, level)))
+                print("The time taken to explore using UCS :", timeit.default_timer() - starttime)
+            if buttons[3].rect.collidepoint(pygame.mouse.get_pos()):
+                for b in buttons:
+                    b.clicked = False
+                buttons[3].clicked = True
+                starttime = timeit.default_timer()
+                print("The start time is :", starttime)
+                algorithms.pathFind(goalx, goaly, (algorithms.GBFS(2, 1, level)))
+                print("The time taken to explore using GBFS :", timeit.default_timer() - starttime)
+            if buttons[4].rect.collidepoint(pygame.mouse.get_pos()):
+                for b in buttons:
+                    b.clicked = False
+                buttons[4].clicked = True
+                starttime = timeit.default_timer()
+                print("The start time is :", starttime)
+                algorithms.pathFind(goalx, goaly, (algorithms.Astar(2, 1, level)))
+                print("The time taken to explore using A* :", timeit.default_timer() - starttime)
+            
     for wall in walls:
         pygame.draw.rect(screen, (32, 105, 201), wall.rect)
-    pygame.draw.ellipse(screen, (255, 0, 0), end_rect)
-    pygame.draw.ellipse(screen, (255, 200, 0), player.rect)
-    pygame.draw.rect(screen, (255, 200, 0), panel.rect)
     for x in exp:
         time.sleep(0)
         pygame.draw.rect(screen, (100, 100, 100), x.rect)
-    b1 = panel.button(screen, (500, 10), "BFS")
-    b2 = panel.button(screen, (620, 10), "DFS")
-    b3 = panel.button(screen, (500, 80), "UCS")
-    b4 = panel.button(screen, (620, 80), "GBFS")
-    b5 = panel.button(screen, (500, 150), "A*")
+    for p in finalpath:
+        time.sleep(0)
+        pygame.draw.rect(screen, (239,139, 72), p.rect)
+    pygame.draw.ellipse(screen, (255, 0, 0), end_rect)
+    pygame.draw.ellipse(screen, (255, 0, 0), player.rect)
+    pygame.draw.rect(screen, (255, 200, 0), panel.rect)
+    buttons[0].button()
+    buttons[1].button()
+    buttons[2].button()
+    buttons[3].button()
+    buttons[4].button()
     b6 = panel.explored(screen, (500, 250), "Explored:")
     b7 = panel.path(screen, (500, 290), "Path:")
     
@@ -440,7 +459,4 @@ while running:
     # font.render_to(screen, (540, 350), out, pygame.Color('dodgerblue'))
     
     pygame.display.flip()
-    # clock.tick(360)
-
-# 
 pygame.quit()

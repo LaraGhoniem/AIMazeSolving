@@ -82,10 +82,9 @@ class Algorithms(object):
         frontier.append((x, y))
         explored = []
         actions = {}
-        childNode = 0
-        actions[x,y] = x,y
+        childNode = (x, y)
+        actions[childNode] = x, y
         while len(frontier) > 0:
-            time.sleep(0)
             x, y = frontier.popleft()
             if(x - 1, y) in path and (x - 1, y) not in explored:
                 childNode = (x - 1, y)
@@ -120,31 +119,34 @@ class Algorithms(object):
         frontier.appendleft((x, y))
         explored = []
         actions = {}
-        childNode = 0
+        childNode = (x, y)
+        actions[childNode] = x, y
         while len(frontier) > 0:
-            time.sleep(0)
             x, y = frontier.popleft()
             if (x - 1, y) in path and (x - 1, y) not in explored:
                 childNode = (x - 1, y)
+                actions[childNode] = x, y
                 frontier.appendleft(childNode)
                 explored.append(childNode)
                 level[y][x] = "+"
             if (x, y - 1) in path and (x, y - 1) not in explored:
                 childNode = (x, y - 1)
+                actions[childNode] = x, y
                 frontier.appendleft(childNode)
                 explored.append(childNode)
                 level[y][x] = "+"
             if (x + 1, y) in path and (x + 1, y) not in explored:
                 childNode = (x + 1, y)
+                actions[childNode] = x, y
                 frontier.append(childNode)
                 explored.append(childNode)
                 level[y][x] = "+"
             if (x, y + 1) in path and (x, y + 1) not in explored:
                 childNode = (x, y + 1)
+                actions[childNode] = x, y
                 frontier.appendleft(childNode)
                 explored.append(childNode)
                 level[y][x] = "+"
-            actions[childNode] = x, y
             if (x, y) == (goalx, goaly):
                 return actions
             Maze(level)
@@ -154,31 +156,34 @@ class Algorithms(object):
         frontier.put((realcost[y][x], (x, y)))
         explored = []
         actions = {}
-        childNode = 0
+        childNode = (x, y)
+        actions[childNode] = x, y
         while not frontier.empty():
-            time.sleep(0)
             cost, (x, y) = frontier.get()
             if(x - 1, y) in path and (x - 1, y) not in explored:
                 childNode = (x - 1, y)
+                actions[childNode] = x, y
                 frontier.put((realcost[y][x] + realcost[y][x - 1], (x - 1, y)))
                 explored.append(childNode)
                 level[y][x] = "+"
             if(x, y - 1) in path and (x, y - 1) not in explored:
                 childNode = (x, y - 1)
+                actions[childNode] = x, y
                 frontier.put((realcost[y][x] + realcost[y - 1][x], (x, y - 1)))
                 explored.append(childNode)
                 level[y][x] = "+"
             if(x + 1, y) in path and (x + 1, y) not in explored:
                 childNode = (x + 1, y)
+                actions[childNode] = x, y
                 frontier.put((realcost[y][x] + realcost[y][x + 1], (x + 1, y)))
                 explored.append(childNode)
                 level[y][x] = "+"
             if (x, y + 1) in path and (x, y + 1) not in explored:
                 childNode = (x, y + 1)
+                actions[childNode] = x, y
                 frontier.put((realcost[y][x] + realcost[y + 1][x], (x, y + 1)))
                 explored.append(childNode)
                 level[y][x] = "+"
-            actions[childNode] = x, y
             if (x, y) == (goalx, goaly):
                 return actions
             Maze(level)
@@ -188,31 +193,34 @@ class Algorithms(object):
         frontier.put((heuristiccost[y][x], (x, y)))
         explored = []
         actions = {}
-        childNode = 0
+        childNode = (x, y)
+        actions[childNode] = x, y
         while not frontier.empty():
-            time.sleep(0)
             cost, (x, y) = frontier.get()
             if (x - 1, y) in path and (x - 1, y) not in explored:
                 childNode = (x - 1, y)
+                actions[childNode] = x, y
                 frontier.put((heuristiccost[y][x - 1], (x - 1, y)))
                 explored.append(childNode)
                 level[y][x] = "+"
             if (x, y - 1) in path and (x, y - 1) not in explored:
                 childNode = (x, y - 1)
+                actions[childNode] = x, y
                 frontier.put((heuristiccost[y - 1][x], (x, y - 1)))
                 explored.append(childNode)
                 level[y][x] = "+"
             if (x + 1, y) in path and (x + 1, y) not in explored:
                 childNode = (x + 1, y)
+                actions[childNode] = x, y
                 frontier.put((heuristiccost[y][x + 1], (x + 1, y)))
                 explored.append(childNode)
                 level[y][x] = "+"
             if (x, y + 1) in path and (x, y + 1) not in explored:
                 childNode = (x, y + 1)
+                actions[childNode] = x, y
                 frontier.put((heuristiccost[y + 1][x], (x, y + 1)))
                 explored.append(childNode)
                 level[y][x] = "+"
-            actions[childNode] = x, y
             if (x, y) == (goalx, goaly):
                 return actions
             Maze(level)
@@ -222,31 +230,34 @@ class Algorithms(object):
         frontier.put((realcost[y][x], heuristiccost[y][x], (x, y)))
         explored = []
         actions = {}
-        childNode = 0
+        childNode = (x, y)
+        actions[childNode] = x, y
         while not frontier.empty():
-            time.sleep(0)
             tcost, hcost, (x, y) = frontier.get()
             if(x - 1, y) in path and (x - 1, y) not in explored:
                 childNode = (x - 1, y)
+                actions[childNode] = x, y
                 frontier.put((realcost[y][x] + realcost[y][x - 1] + heuristiccost[y][x - 1], heuristiccost[y][x - 1], (x - 1, y)))
                 explored.append(childNode)
                 level[y][x] = "+"
             if(x, y - 1) in path and (x, y - 1) not in explored:
                 childNode = (x, y - 1)
+                actions[childNode] = x, y
                 frontier.put((realcost[y][x] + realcost[y - 1][x] + heuristiccost[y - 1][x], heuristiccost[y - 1][x], (x, y - 1)))
                 explored.append(childNode)
                 level[y][x] = "+"
             if(x + 1, y) in path and (x + 1, y) not in explored:
                 childNode = (x + 1, y)
+                actions[childNode] = x, y
                 frontier.put((realcost[y][x] + realcost[y][x + 1] + heuristiccost[y][x + 1], heuristiccost[y][x + 1], (x + 1, y)))
                 explored.append(childNode)
                 level[y][x] = "+"
             if (x, y + 1) in path and (x, y + 1) not in explored:
                 childNode = (x, y + 1)
+                actions[childNode] = x, y
                 frontier.put((realcost[y][x] + realcost[y + 1][x] + heuristiccost[y + 1][x], heuristiccost[y + 1][x], (x, y + 1)))
                 explored.append(childNode)
                 level[y][x] = "+"
-            actions[childNode] = x, y
             if (x, y) == (goalx, goaly):
                 return actions
             Maze(level)
@@ -254,17 +265,17 @@ class Algorithms(object):
     def pathFind(self, x, y, actions):
         while (x, y) != (fx, fy):
             x, y = actions[x, y]
-            level[y][x]="-"
+            level[y][x] = "-"
             Maze(level)
         
 pygame.init()
-
-pygame.display.set_caption("Search Maze Game")
+icon = pygame.image.load('icon.jpg')
+pygame.display.set_icon(icon)
+pygame.display.set_caption("Solving a Maze Using AI Algorithms")
 screen = pygame.display.set_mode((750, 450))
 clock = pygame.time.Clock()
-font = pygame.freetype.SysFont(None, 34)
-font.origin = True
-clicked = 0
+none = True
+drawOnce=False
 walls = []
 path = []
 exp = []
@@ -278,31 +289,37 @@ buttons = [
     Buttons(screen, (500, 150), "A*")
 ]
 
-level = [["W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W"],
-        ["W"," ","P"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","W"],
-        ["W"," "," "," ","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W"," "," "," ","W"," ","W"],
-        ["W","W","W"," ","W"," "," "," "," "," "," "," ","W"," "," ","W","W"," "," "," ","W"," "," "," ","W"," ","W"],
-        ["W"," ","W"," ","W"," "," ","W","W"," "," "," ","W"," "," "," ","W"," "," "," ","W"," "," ","W","W","W","W"],
-        ["W"," ","W"," ","W"," "," "," ","W"," "," "," "," "," "," "," ","W"," "," "," "," "," ","W","W","W"," ","W"],
-        ["W"," "," "," ","W","W","W","W","W"," "," ","W","W","W","W"," "," "," ","W"," "," "," "," "," ","W"," ","W"],
-        ["W","W"," "," "," "," "," "," "," "," "," "," "," "," ","W"," "," ","W","W"," "," "," ","W"," "," "," ","W"],
-        ["W","W","W","W","W","W","W","W","W","W","W","W","W","W","W"," "," "," ","W"," "," "," ","W"," "," "," ","W"],
-        ["W"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","W","W","W","W","W","W","W","W","W"],
-        ["W"," "," ","W","W","W","W","W","W"," "," ","W"," "," "," ","W","W"," "," "," "," "," "," "," "," "," ","W"],
-        ["W"," "," "," ","W"," "," "," "," "," ","W","W","W"," "," ","W"," "," ","W"," "," ","W"," ","W"," "," ","W"],
-        ["W"," ","W"," ","W","W","W","W","W"," "," "," "," "," ","W","W","W","W","W"," "," ","W","W","W"," "," ","W"],
-        ["W","W","W"," "," "," ","W","W"," "," "," "," ","W"," "," "," "," "," "," "," "," "," ","W"," "," "," ","W"],
-        ["W"," "," "," ","W"," "," "," "," ","W","W","W","W","W","W","W","W","W"," "," ","W","W","W","W","W","W","W"],
-        ["W"," "," ","W","W"," "," "," "," "," "," "," ","W"," "," "," ","W"," "," "," "," "," "," "," "," "," ","W"],
-        ["W","W","W","W","W","W","W","W","W","W","W","W","W"," "," "," ","W","W","W","W","W","W","W"," "," "," ","W"],
-        ["W"," "," "," "," "," "," "," "," "," "," "," "," "," ","W"," ","W"," "," "," "," "," "," "," ","W","W","W"],
-        ["W"," "," "," ","W","W","W","W","W","W","W"," "," "," ","W"," "," "," "," ","W","W","W","W"," "," "," ","W"],
-        ["W"," "," "," ","W"," "," "," "," ","W"," "," "," "," "," "," "," ","W"," "," ","W"," "," "," "," ","W","W"],
-        ["W"," ","W","W","W"," "," ","W","W","W"," "," ","W","W"," "," ","W","W","W","W","W"," "," "," "," "," ","W"],
-        ["W"," "," "," ","W"," "," "," "," ","W","W","W","W"," "," "," "," "," "," ","W"," "," ","W","W","W","W","W"],
-        ["W","W","W","W","W","W","W"," "," "," "," ","W"," "," ","W","W"," "," "," ","W","W","W","W"," "," "," ","W"],
-        ["W"," "," "," "," "," "," "," "," "," "," "," "," "," "," ","W"," ","W"," "," "," "," "," "," ","E"," ","W"],
-        ["W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W"]]
+def resetLevel():
+    global level, exp, finalpath
+    exp = []
+    finalpath = []
+    level = [["W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W"],
+            ["W"," ","P"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","W"],
+            ["W"," "," "," ","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W"," "," "," ","W"," ","W"],
+            ["W","W","W"," ","W"," "," "," "," "," "," "," ","W"," "," ","W","W"," "," "," ","W"," "," "," ","W"," ","W"],
+            ["W"," ","W"," ","W"," "," ","W","W"," "," "," ","W"," "," "," ","W"," "," "," ","W"," "," ","W","W","W","W"],
+            ["W"," ","W"," ","W"," "," "," ","W"," "," "," "," "," "," "," ","W"," "," "," "," "," ","W","W","W"," ","W"],
+            ["W"," "," "," ","W","W","W","W","W"," "," ","W","W","W","W"," "," "," ","W"," "," "," "," "," ","W"," ","W"],
+            ["W","W"," "," "," "," "," "," "," "," "," "," "," "," ","W"," "," ","W","W"," "," "," ","W"," "," "," ","W"],
+            ["W","W","W","W","W","W","W","W","W","W","W","W","W","W","W"," "," "," ","W"," "," "," ","W"," "," "," ","W"],
+            ["W"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","W","W","W","W","W","W","W","W","W"],
+            ["W"," "," ","W","W","W","W","W","W"," "," ","W"," "," "," ","W","W"," "," "," "," "," "," "," "," "," ","W"],
+            ["W"," "," "," ","W"," "," "," "," "," ","W","W","W"," "," ","W"," "," ","W"," "," ","W"," ","W"," "," ","W"],
+            ["W"," ","W"," ","W","W","W","W","W"," "," "," "," "," ","W","W","W","W","W"," "," ","W","W","W"," "," ","W"],
+            ["W","W","W"," "," "," ","W","W"," "," "," "," ","W"," "," "," "," "," "," "," "," "," ","W"," "," "," ","W"],
+            ["W"," "," "," ","W"," "," "," "," ","W","W","W","W","W","W","W","W","W"," "," ","W","W","W","W","W","W","W"],
+            ["W"," "," ","W","W"," "," "," "," "," "," "," ","W"," "," "," ","W"," "," "," "," "," "," "," "," "," ","W"],
+            ["W","W","W","W","W","W","W","W","W","W","W","W","W"," "," "," ","W","W","W","W","W","W","W"," "," "," ","W"],
+            ["W"," "," "," "," "," "," "," "," "," "," "," "," "," ","W"," ","W"," "," "," "," "," "," "," ","W","W","W"],
+            ["W"," "," "," ","W","W","W","W","W","W","W"," "," "," ","W"," "," "," "," ","W","W","W","W"," "," "," ","W"],
+            ["W"," "," "," ","W"," "," "," "," ","W"," "," "," "," "," "," "," ","W"," "," ","W"," "," "," "," ","W","W"],
+            ["W"," ","W","W","W"," "," ","W","W","W"," "," ","W","W"," "," ","W","W","W","W","W"," "," "," "," "," ","W"],
+            ["W"," "," "," ","W"," "," "," "," ","W","W","W","W"," "," "," "," "," "," ","W"," "," ","W","W","W","W","W"],
+            ["W","W","W","W","W","W","W"," "," "," "," ","W"," "," ","W","W"," "," "," ","W","W","W","W"," "," "," ","W"],
+            ["W"," "," "," "," "," "," "," "," "," "," "," "," "," "," ","W"," ","W"," "," "," "," "," "," ","E"," ","W"],
+            ["W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W","W"]]
+
+resetLevel()
 
 realcost = [[-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1],
             [-1, 74, 1, 156, 29, 90, 174, 2, 77, 105, 98, 135, 174, 72, 179, 190, 149, 113, 107, 170, 184, 85, 40, 42, 5, 149, -1],
@@ -372,7 +389,7 @@ def Maze(level):
             if col == " ":
                 path.append((j, i))
             if col == "-":
-                   Final((x,y))
+                Final((x,y))
             if col == "+":
                 Explored((x, y))
             x += 18
@@ -380,83 +397,98 @@ def Maze(level):
         x = 1
         
 Maze(level)
-algorithms = Algorithms(path)
-running = True
-
-while running:
-    screen.fill((1, 8, 52))
-    for e in pygame.event.get():
-        if e.type == pygame.QUIT:
-            running = False
-        if e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
-            running = False
-        if e.type == pygame.MOUSEBUTTONDOWN:
-            if buttons[0].rect.collidepoint(pygame.mouse.get_pos()):
-                for b in buttons:
-                    b.clicked = False
-                buttons[0].clicked = True
-                starttime = timeit.default_timer()
-                print("The start time is :", starttime)
-                algorithms.pathFind(goalx, goaly, (algorithms.BFS(2, 1, level)))
-                print("The time taken to explore using bfs :", timeit.default_timer() - starttime)
-            if buttons[1].rect.collidepoint(pygame.mouse.get_pos()):
-                for b in buttons:
-                    b.clicked = False
-                buttons[1].clicked = True
-                starttime = timeit.default_timer()
-                print("The start time is :", starttime)
-                algorithms.pathFind(goalx, goaly, (algorithms.DFS(2, 1, level)))
-                print("The time taken to explore using dfs :", timeit.default_timer() - starttime)
-            if buttons[2].rect.collidepoint(pygame.mouse.get_pos()):
-                for b in buttons:
-                    b.clicked = False
-                buttons[2].clicked = True
-                starttime = timeit.default_timer()
-                print("The start time is :", starttime)
-                algorithms.pathFind(goalx, goaly, (algorithms.UCS(2, 1, level)))
-                print("The time taken to explore using UCS :", timeit.default_timer() - starttime)
-            if buttons[3].rect.collidepoint(pygame.mouse.get_pos()):
-                for b in buttons:
-                    b.clicked = False
-                buttons[3].clicked = True
-                starttime = timeit.default_timer()
-                print("The start time is :", starttime)
-                algorithms.pathFind(goalx, goaly, (algorithms.GBFS(2, 1, level)))
-                print("The time taken to explore using GBFS :", timeit.default_timer() - starttime)
-            if buttons[4].rect.collidepoint(pygame.mouse.get_pos()):
-                for b in buttons:
-                    b.clicked = False
-                buttons[4].clicked = True
-                starttime = timeit.default_timer()
-                print("The start time is :", starttime)
-                algorithms.pathFind(goalx, goaly, (algorithms.Astar(2, 1, level)))
-                print("The time taken to explore using A* :", timeit.default_timer() - starttime)
-            
-    for wall in walls:
-        pygame.draw.rect(screen, (32, 105, 201), wall.rect)
-    for x in exp:
-        time.sleep(0)
-        pygame.draw.rect(screen, (100, 100, 100), x.rect)
-    for p in finalpath:
-        time.sleep(0)
-        pygame.draw.rect(screen, (239,139, 72), p.rect)
+def draw():
     pygame.draw.ellipse(screen, (255, 0, 0), end_rect)
     pygame.draw.ellipse(screen, (255, 0, 0), player.rect)
-    pygame.draw.rect(screen, (255, 200, 0), panel.rect)
+
+def buttonsreset():
     buttons[0].button()
     buttons[1].button()
     buttons[2].button()
     buttons[3].button()
     buttons[4].button()
+
+algorithms = Algorithms(path)
+running = True
+while running:
+    screen.fill((1, 8, 52))       
+    for wall in walls:
+        pygame.draw.rect(screen, (32, 105, 201), wall.rect)
+    draw()
+    pygame.draw.rect(screen, (255, 200, 0), panel.rect)
+    buttonsreset()
     b6 = panel.explored(screen, (500, 250), "Explored:")
     b7 = panel.path(screen, (500, 290), "Path:")
-    
-    # ticks=pygame.time.get_ticks()
-    # millis=ticks%1000
-    # seconds=int(ticks/1000 % 60)
-    # minutes=int(ticks/60000 % 24)
-    # out='{minutes:02d}:{seconds:02d}:{millis}'.format(minutes=minutes, millis=millis, seconds=seconds)
-    # font.render_to(screen, (540, 350), out, pygame.Color('dodgerblue'))
-    
+    for e in pygame.event.get():
+        if e.type == pygame.QUIT:
+            running = False
+    if e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
+        running = False
+    if e.type == pygame.MOUSEBUTTONDOWN:
+        resetLevel()
+        
+        Maze(level)
+        none=True
+        if buttons[0].rect.collidepoint(pygame.mouse.get_pos()):
+            none=False
+            for b in buttons:
+                b.clicked = False
+            buttons[0].clicked = True
+            starttime = timeit.default_timer()
+            algorithms.pathFind(goalx, goaly, (algorithms.BFS(2, 1, level)))
+            exetime="The time taken to solve maze using BFS: "+str(timeit.default_timer() - starttime)
+            print(exetime)
+        if buttons[1].rect.collidepoint(pygame.mouse.get_pos()):
+            none=False
+            for b in buttons:
+                b.clicked = False
+            buttons[1].clicked = True
+            starttime = timeit.default_timer()
+            act=algorithms.DFS(2, 1, level)
+            algorithms.pathFind(goalx, goaly, (act))
+            print("The time taken to explore using DFS: ", timeit.default_timer() - starttime)
+        if buttons[2].rect.collidepoint(pygame.mouse.get_pos()):
+            none=False
+            for b in buttons:
+                b.clicked = False
+            buttons[2].clicked = True
+            starttime = timeit.default_timer()
+            act=algorithms.UCS(2, 1, level)
+            algorithms.pathFind(goalx, goaly, (act))
+            print("The time taken to explore using UCS: ", timeit.default_timer() - starttime)
+        if buttons[3].rect.collidepoint(pygame.mouse.get_pos()):
+            none=False
+            for b in buttons:
+                b.clicked = False
+            buttons[3].clicked = True
+            starttime = timeit.default_timer()
+            act=algorithms.GBFS(2, 1, level)
+            algorithms.pathFind(goalx, goaly, (act))
+            print("The time taken to explore using GBFS: ", timeit.default_timer() - starttime)
+        if buttons[4].rect.collidepoint(pygame.mouse.get_pos()):
+            none=False
+            for b in buttons:
+                b.clicked = False
+            buttons[4].clicked = True
+            starttime = timeit.default_timer()
+            act=algorithms.Astar(2, 1, level)
+            algorithms.pathFind(goalx, goaly, (act))
+            print("The time taken to explore using A*: ", timeit.default_timer() - starttime)
+        if none:
+            for b in buttons:
+                b.clicked = False
+        buttonsreset()
+        for x in exp:
+            if drawOnce == False:
+                draw() 
+            pygame.draw.rect(screen, (100, 100, 100), x.rect)
+            time.sleep(0)
+            pygame.display.update()
+            drawOnce == True
+    for x in exp:
+            pygame.draw.rect(screen, (100, 100, 100), x.rect)
+    for p in finalpath:
+        pygame.draw.rect(screen, (239,139, 72), p.rect)
+    draw()
     pygame.display.flip()
 pygame.quit()

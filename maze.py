@@ -275,7 +275,7 @@ pygame.display.set_caption("Solving a Maze Using AI Algorithms")
 screen = pygame.display.set_mode((750, 450))
 clock = pygame.time.Clock()
 none = True
-drawOnce=False
+drawOnce = False
 walls = []
 path = []
 exp = []

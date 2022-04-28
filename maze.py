@@ -138,7 +138,7 @@ class Algorithms(object):
             if (x + 1, y) in path and (x + 1, y) not in explored:
                 childNode = (x + 1, y)
                 actions[childNode] = x, y
-                frontier.append(childNode)
+                frontier.appendleft(childNode)
                 explored.append(childNode)
                 level[y][x] = "+"
             if (x, y + 1) in path and (x, y + 1) not in explored:
@@ -273,7 +273,6 @@ icon = pygame.image.load('icon.jpg')
 pygame.display.set_icon(icon)
 pygame.display.set_caption("Solving a Maze Using AI Algorithms")
 screen = pygame.display.set_mode((750, 450))
-clock = pygame.time.Clock()
 none = True
 drawOnce = False
 walls = []

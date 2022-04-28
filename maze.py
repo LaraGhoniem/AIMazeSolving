@@ -88,7 +88,7 @@ class Algorithms(object):
             x, y = frontier.popleft()
             if(x - 1, y) in path and (x - 1, y) not in explored:
                 childNode = (x - 1, y)
-                actions[childNode] = x,y
+                actions[childNode] = x, y
                 frontier.append(childNode)
                 explored.append(childNode)
                 level[y][x] = "+"
@@ -421,69 +421,68 @@ while running:
     for e in pygame.event.get():
         if e.type == pygame.QUIT:
             running = False
-    if e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
-        running = False
-    if e.type == pygame.MOUSEBUTTONDOWN:
-        resetLevel()
-        
-        Maze(level)
-        none=True
-        if buttons[0].rect.collidepoint(pygame.mouse.get_pos()):
-            none=False
-            for b in buttons:
-                b.clicked = False
-            buttons[0].clicked = True
-            starttime = timeit.default_timer()
-            algorithms.pathFind(goalx, goaly, (algorithms.BFS(2, 1, level)))
-            exetime="The time taken to solve maze using BFS: "+str(timeit.default_timer() - starttime)
-            print(exetime)
-        if buttons[1].rect.collidepoint(pygame.mouse.get_pos()):
-            none=False
-            for b in buttons:
-                b.clicked = False
-            buttons[1].clicked = True
-            starttime = timeit.default_timer()
-            act=algorithms.DFS(2, 1, level)
-            algorithms.pathFind(goalx, goaly, (act))
-            print("The time taken to explore using DFS: ", timeit.default_timer() - starttime)
-        if buttons[2].rect.collidepoint(pygame.mouse.get_pos()):
-            none=False
-            for b in buttons:
-                b.clicked = False
-            buttons[2].clicked = True
-            starttime = timeit.default_timer()
-            act=algorithms.UCS(2, 1, level)
-            algorithms.pathFind(goalx, goaly, (act))
-            print("The time taken to explore using UCS: ", timeit.default_timer() - starttime)
-        if buttons[3].rect.collidepoint(pygame.mouse.get_pos()):
-            none=False
-            for b in buttons:
-                b.clicked = False
-            buttons[3].clicked = True
-            starttime = timeit.default_timer()
-            act=algorithms.GBFS(2, 1, level)
-            algorithms.pathFind(goalx, goaly, (act))
-            print("The time taken to explore using GBFS: ", timeit.default_timer() - starttime)
-        if buttons[4].rect.collidepoint(pygame.mouse.get_pos()):
-            none=False
-            for b in buttons:
-                b.clicked = False
-            buttons[4].clicked = True
-            starttime = timeit.default_timer()
-            act=algorithms.Astar(2, 1, level)
-            algorithms.pathFind(goalx, goaly, (act))
-            print("The time taken to explore using A*: ", timeit.default_timer() - starttime)
-        if none:
-            for b in buttons:
-                b.clicked = False
-        buttonsreset()
-        for x in exp:
-            if drawOnce == False:
-                draw() 
-            pygame.draw.rect(screen, (100, 100, 100), x.rect)
-            time.sleep(0)
-            pygame.display.update()
-            drawOnce == True
+        if e.type == pygame.KEYDOWN and e.key == pygame.K_ESCAPE:
+            running = False
+        if e.type == pygame.MOUSEBUTTONDOWN:
+            resetLevel()
+            Maze(level)
+            none=True
+            if buttons[0].rect.collidepoint(pygame.mouse.get_pos()):
+                none=False
+                for b in buttons:
+                    b.clicked = False
+                buttons[0].clicked = True
+                starttime = timeit.default_timer()
+                algorithms.pathFind(goalx, goaly, (algorithms.BFS(2, 1, level)))
+                exetime="The time taken to solve maze using BFS: "+str(timeit.default_timer() - starttime)
+                print(exetime)
+            if buttons[1].rect.collidepoint(pygame.mouse.get_pos()):
+                none=False
+                for b in buttons:
+                    b.clicked = False
+                buttons[1].clicked = True
+                starttime = timeit.default_timer()
+                act=algorithms.DFS(2, 1, level)
+                algorithms.pathFind(goalx, goaly, (act))
+                print("The time taken to explore using DFS: ", timeit.default_timer() - starttime)
+            if buttons[2].rect.collidepoint(pygame.mouse.get_pos()):
+                none=False
+                for b in buttons:
+                    b.clicked = False
+                buttons[2].clicked = True
+                starttime = timeit.default_timer()
+                act=algorithms.UCS(2, 1, level)
+                algorithms.pathFind(goalx, goaly, (act))
+                print("The time taken to explore using UCS: ", timeit.default_timer() - starttime)
+            if buttons[3].rect.collidepoint(pygame.mouse.get_pos()):
+                none=False
+                for b in buttons:
+                    b.clicked = False
+                buttons[3].clicked = True
+                starttime = timeit.default_timer()
+                act=algorithms.GBFS(2, 1, level)
+                algorithms.pathFind(goalx, goaly, (act))
+                print("The time taken to explore using GBFS: ", timeit.default_timer() - starttime)
+            if buttons[4].rect.collidepoint(pygame.mouse.get_pos()):
+                none=False
+                for b in buttons:
+                    b.clicked = False
+                buttons[4].clicked = True
+                starttime = timeit.default_timer()
+                act=algorithms.Astar(2, 1, level)
+                algorithms.pathFind(goalx, goaly, (act))
+                print("The time taken to explore using A*: ", timeit.default_timer() - starttime)
+            if none:
+                for b in buttons:
+                    b.clicked = False
+            buttonsreset()
+            for x in exp:
+                if drawOnce == False:
+                    draw()
+                pygame.draw.rect(screen, (100, 100, 100), x.rect)
+                time.sleep(0)
+                pygame.display.update()
+                drawOnce == True
     for x in exp:
             pygame.draw.rect(screen, (100, 100, 100), x.rect)
     for p in finalpath:
